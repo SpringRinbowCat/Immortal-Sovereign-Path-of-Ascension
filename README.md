@@ -1,9 +1,12 @@
 # 太初灵猫录 (Mystic Cat: Path of Ascension)
 
-开发者：天才小彩虹(RainbowSpringCat)
 一个基于 SFML 3 的 C++ 游戏项目，采用严格分层的 MVC 架构。
 
 本文档同步自项目架构规范，是所有协作者必须遵守的分层职责与交互契约。代码实现规范另见仓库说明结尾的「代码规范」一节。
+
+## 开发者
+
+- 天才小彩虹 (RainbowSpringCat)
 
 ## 环境要求
 
