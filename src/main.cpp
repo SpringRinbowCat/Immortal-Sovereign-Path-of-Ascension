@@ -16,7 +16,7 @@ namespace
     const unsigned int kWindowHeight = 720u;
 
     // 窗口标题
-    const std::string kWindowTitle = "猫儿论道";
+    const std::string kWindowTitle = "太初灵猫录";
 }
 
 int main()
