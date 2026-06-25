@@ -7,30 +7,30 @@
 
 namespace LoginUiConfig {
     // 字号
-    constexpr unsigned int kTitleCharSize = 48u;
-    constexpr unsigned int kLabelCharSize = 24u;
-    constexpr unsigned int kInputCharSize = 24u;
-    constexpr unsigned int kButtonCharSize = 28u;
-    constexpr unsigned int kErrorCharSize = 20u;
-    constexpr unsigned int kDialogCharSize = 40u;
+    constexpr unsigned int kTitleCharSize = 64u;
+    constexpr unsigned int kLabelCharSize = 30u;
+    constexpr unsigned int kInputCharSize = 32u;
+    constexpr unsigned int kButtonCharSize = 38u;
+    constexpr unsigned int kErrorCharSize = 26u;
+    constexpr unsigned int kDialogCharSize = 48u;
 
-    // 布局,基于 WindowConfig 的 1280x720
-    constexpr float kFieldX = 460.f;          // 账号框/密码框/按钮共用左边界
-    constexpr float kFieldWidth = 360.f;
-    constexpr float kFieldHeight = 48.f;
-    constexpr float kAccountFieldY = 260.f;
-    constexpr float kPasswordFieldY = 350.f;
-    constexpr float kButtonY = 450.f;
-    constexpr float kButtonHeight = 52.f;
-    constexpr float kTitleY = 130.f;
-    constexpr float kErrorY = 530.f;
-    constexpr float kLabelGapY = 30.f;        // 标签相对输入框上方的间距
-    constexpr float kTextPaddingX = 12.f;     // 文本相对输入框左内边距
+    // 布局,基于 WindowConfig 的竖屏 720x1280
+    constexpr float kFieldX = 80.f;           // 账号框/密码框/按钮共用左边界
+    constexpr float kFieldWidth = 560.f;
+    constexpr float kFieldHeight = 64.f;
+    constexpr float kAccountFieldY = 470.f;
+    constexpr float kPasswordFieldY = 600.f;
+    constexpr float kButtonY = 760.f;
+    constexpr float kButtonHeight = 72.f;
+    constexpr float kTitleY = 220.f;
+    constexpr float kErrorY = 870.f;
+    constexpr float kLabelGapY = 38.f;        // 标签相对输入框上方的间距
+    constexpr float kTextPaddingX = 16.f;     // 文本相对输入框左内边距
     constexpr float kFieldOutlineThickness = 2.f;
 
     // 弹窗尺寸,居中位置由窗口尺寸推算
-    constexpr float kDialogWidth = 420.f;
-    constexpr float kDialogHeight = 200.f;
+    constexpr float kDialogWidth = 520.f;
+    constexpr float kDialogHeight = 240.f;
 
     // 仅接受的 ASCII 可见字符范围
     constexpr unsigned int kAsciiPrintableMin = 0x20u;
@@ -39,12 +39,16 @@ namespace LoginUiConfig {
     // 退格控制字符码
     constexpr unsigned int kBackspaceCode = 8u;
 
+    // 回车控制字符码,回车键提交登录
+    constexpr unsigned int kCarriageReturnCode = 13u;
+    constexpr unsigned int kLineFeedCode = 10u;
+
     // 密码掩码字符
     constexpr char kPasswordMaskChar = '*';
 
     // 输入光标
     constexpr float kCaretWidth = 2.f;
-    constexpr float kCaretHeight = 28.f;
+    constexpr float kCaretHeight = 40.f;
     constexpr float kCaretBlinkInterval = 0.5f; // 秒
 
     // 显示文案,UTF-8 编码

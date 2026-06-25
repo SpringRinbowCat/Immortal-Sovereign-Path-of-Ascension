@@ -10,6 +10,7 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include "Config/Login/LoginUiConfig.h"
 #include "Config/WindowConfig.h"
@@ -142,9 +143,10 @@ void LoginView::showSuccessDialog(const std::string& message)
     const float top = boxPos.y + (LoginUiConfig::kDialogHeight - static_cast<float>(LoginUiConfig::kDialogCharSize)) * 0.5f;
     centerTextX(_dialogText, boxPos.x, LoginUiConfig::kDialogWidth, top);
     _dialogVisible = true;
+    sf::Keyboard::setVirtualKeyboardVisible(false);
 }
 
-void LoginView::handleEvent(const sf::Event& event)
+void LoginView::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
 {
     if (_dialogVisible)
     {
@@ -156,9 +158,16 @@ void LoginView::handleEvent(const sf::Event& event)
     {
         if (mouse->button == sf::Mouse::Button::Left)
         {
-            _handleMousePressed(sf::Vector2f(static_cast<float>(mouse->position.x),
-                                             static_cast<float>(mouse->position.y)));
+            _handleMousePressed(window.mapPixelToCoords(mouse->position));
         }
+        return;
+    }
+
+    // 移动端触摸不映射为鼠标事件,需单独处理
+    const sf::Event::TouchBegan* touch = event.getIf<sf::Event::TouchBegan>();
+    if (touch != nullptr)
+    {
+        _handleMousePressed(window.mapPixelToCoords(touch->position));
         return;
     }
 
@@ -172,15 +181,8 @@ void LoginView::handleEvent(const sf::Event& event)
     const sf::Event::KeyPressed* key = event.getIf<sf::Event::KeyPressed>();
     if (key != nullptr)
     {
-        if (key->code == sf::Keyboard::Key::Enter)
-        {
-            _handleEnter();
-        }
-        else if (key->code == sf::Keyboard::Key::Backspace)
-        {
-            _handleBackspace();
-        }
-        else if (key->code == sf::Keyboard::Key::Tab)
+        // 退格与回车统一由 TextEntered 处理,这里只处理桌面 Tab 切换焦点
+        if (key->code == sf::Keyboard::Key::Tab)
         {
             _focusNextField();
         }
@@ -270,6 +272,18 @@ void LoginView::_handleTextEntered(unsigned int unicode)
         return;
     }
 
+    // 退格与回车在桌面/移动端统一经 TextEntered 处理
+    if (unicode == LoginUiConfig::kBackspaceCode)
+    {
+        _handleBackspace();
+        return;
+    }
+    if (unicode == LoginUiConfig::kCarriageReturnCode || unicode == LoginUiConfig::kLineFeedCode)
+    {
+        _handleEnter();
+        return;
+    }
+
     if (unicode < LoginUiConfig::kAsciiPrintableMin || unicode > LoginUiConfig::kAsciiPrintableMax)
     {
         return;
@@ -325,6 +339,9 @@ void LoginView::_setFocus(InputField field)
     _caretVisible = true;
     _caretBlinkTimer = 0.f;
     _refreshFocusVisual();
+
+    // 移动端聚焦输入框时唤起系统软键盘,失焦时收起;桌面端为空操作
+    sf::Keyboard::setVirtualKeyboardVisible(field != InputField::None);
 }
 
 void LoginView::_refreshFocusVisual()

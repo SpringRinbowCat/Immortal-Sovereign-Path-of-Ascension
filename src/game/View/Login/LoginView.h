@@ -24,7 +24,7 @@ public:
 
     void showSuccessDialog(const std::string& message);
 
-    void handleEvent(const sf::Event& event);
+    void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
 
     void update(float deltaSeconds);
 
