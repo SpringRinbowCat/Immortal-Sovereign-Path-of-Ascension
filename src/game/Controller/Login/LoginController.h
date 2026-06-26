@@ -10,11 +10,12 @@
 
 class LoginView;
 class AccountModel;
+class IGameFlow;
 
 // 登录场景控制器,经内部适配器接收 View 与 Model 的上报,避免多重继承
 class LoginController {
 public:
-    LoginController(LoginView& view, AccountModel& model);
+    LoginController(LoginView& view, AccountModel& model, IGameFlow& flow);
 
     // 供 Director 注册到 View 的 userEvent
     ILoginViewDelegate& viewDelegate();
@@ -48,6 +49,7 @@ private:
 
     LoginView& _view;
     AccountModel& _model;
+    IGameFlow& _flow;
     ViewDelegate _viewDelegate;
     AccountObserver _accountObserver;
 };

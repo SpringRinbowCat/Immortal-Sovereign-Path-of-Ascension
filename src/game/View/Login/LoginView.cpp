@@ -27,8 +27,6 @@ namespace {
     const sf::Color kButtonFillColor(70u, 120u, 200u);
     const sf::Color kButtonTextColor(255u, 255u, 255u);
     const sf::Color kErrorColor(232u, 92u, 92u);
-    const sf::Color kOverlayColor(0u, 0u, 0u, 150u);
-    const sf::Color kDialogFillColor(44u, 44u, 60u);
     const sf::Color kCaretColor(232u, 232u, 238u);
 
     // UTF-8 文本转 sf::String
@@ -49,7 +47,6 @@ namespace {
 LoginView::LoginView(const sf::Font& font)
     : _delegate(nullptr)
     , _focusedField(InputField::None)
-    , _dialogVisible(false)
     , _caretVisible(true)
     , _caretBlinkTimer(0.f)
     , _titleText(font, toSfString(LoginUiConfig::kTitleText), LoginUiConfig::kTitleCharSize)
@@ -59,7 +56,6 @@ LoginView::LoginView(const sf::Font& font)
     , _passwordText(font, sf::String(), LoginUiConfig::kInputCharSize)
     , _buttonText(font, toSfString(LoginUiConfig::kButtonText), LoginUiConfig::kButtonCharSize)
     , _errorText(font, sf::String(), LoginUiConfig::kErrorCharSize)
-    , _dialogText(font, sf::String(), LoginUiConfig::kDialogCharSize)
 {
     _layoutBoxes();
     _layoutTexts();
@@ -84,17 +80,6 @@ void LoginView::_layoutBoxes()
 
     _caret.setSize({LoginUiConfig::kCaretWidth, LoginUiConfig::kCaretHeight});
     _caret.setFillColor(kCaretColor);
-
-    _dialogOverlay.setSize({static_cast<float>(WindowConfig::kWindowWidth),
-                            static_cast<float>(WindowConfig::kWindowHeight)});
-    _dialogOverlay.setFillColor(kOverlayColor);
-
-    _dialogBox.setSize({LoginUiConfig::kDialogWidth, LoginUiConfig::kDialogHeight});
-    _dialogBox.setPosition({(static_cast<float>(WindowConfig::kWindowWidth) - LoginUiConfig::kDialogWidth) * 0.5f,
-                            (static_cast<float>(WindowConfig::kWindowHeight) - LoginUiConfig::kDialogHeight) * 0.5f});
-    _dialogBox.setFillColor(kDialogFillColor);
-    _dialogBox.setOutlineColor(kBoxOutlineColor);
-    _dialogBox.setOutlineThickness(LoginUiConfig::kFieldOutlineThickness);
 }
 
 void LoginView::_layoutTexts()
@@ -122,8 +107,6 @@ void LoginView::_layoutTexts()
 
     _errorText.setFillColor(kErrorColor);
     _errorText.setPosition({LoginUiConfig::kFieldX, LoginUiConfig::kErrorY});
-
-    _dialogText.setFillColor(kTextColor);
 }
 
 void LoginView::setDelegate(ILoginViewDelegate* delegate)
@@ -136,23 +119,8 @@ void LoginView::setErrorMessage(const std::string& message)
     _errorText.setString(toSfString(message));
 }
 
-void LoginView::showSuccessDialog(const std::string& message)
-{
-    _dialogText.setString(toSfString(message));
-    const sf::Vector2f boxPos = _dialogBox.getPosition();
-    const float top = boxPos.y + (LoginUiConfig::kDialogHeight - static_cast<float>(LoginUiConfig::kDialogCharSize)) * 0.5f;
-    centerTextX(_dialogText, boxPos.x, LoginUiConfig::kDialogWidth, top);
-    _dialogVisible = true;
-    sf::Keyboard::setVirtualKeyboardVisible(false);
-}
-
 void LoginView::handleEvent(const sf::Event& event, const sf::RenderWindow& window)
 {
-    if (_dialogVisible)
-    {
-        return;
-    }
-
     const sf::Event::MouseButtonPressed* mouse = event.getIf<sf::Event::MouseButtonPressed>();
     if (mouse != nullptr)
     {
@@ -191,7 +159,7 @@ void LoginView::handleEvent(const sf::Event& event, const sf::RenderWindow& wind
 
 void LoginView::update(float deltaSeconds)
 {
-    if (_focusedField == InputField::None || _dialogVisible)
+    if (_focusedField == InputField::None)
     {
         _caretVisible = false;
         return;
@@ -232,16 +200,9 @@ void LoginView::draw(sf::RenderWindow& window) const
     window.draw(_buttonText);
     window.draw(_errorText);
 
-    if (!_dialogVisible && _focusedField != InputField::None && _caretVisible)
+    if (_focusedField != InputField::None && _caretVisible)
     {
         window.draw(_caret);
-    }
-
-    if (_dialogVisible)
-    {
-        window.draw(_dialogOverlay);
-        window.draw(_dialogBox);
-        window.draw(_dialogText);
     }
 }
 

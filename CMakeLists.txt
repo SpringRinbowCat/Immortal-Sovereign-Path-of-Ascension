@@ -16,7 +16,11 @@ set(GAME_SOURCES
     src/game/Infra/ResourceManager.cpp
     src/game/Infra/Platform/PlatformPaths.cpp
     src/game/View/Login/LoginView.cpp
+    src/game/View/Main/MainView.cpp
     src/game/Controller/Login/LoginController.cpp
+    src/game/Controller/Main/MainController.cpp
+    src/game/Scene/LoginScene.cpp
+    src/game/Scene/MainScene.cpp
     src/game/Director/Director.cpp)
 
 set(GAME_OUTPUT_NAME "Mystic-Cat-Path-of-Ascension")

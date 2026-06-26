@@ -15,11 +15,11 @@
 
 #include "Config/ResourceConfig.h"
 #include "Config/WindowConfig.h"
-#include "Controller/Login/LoginController.h"
 #include "Delegate/IPlatformPaths.h"
 #include "Infra/Platform/PlatformPaths.h"
-#include "Model/AccountModel.h"
-#include "View/Login/LoginView.h"
+#include "Scene/IScene.h"
+#include "Scene/LoginScene.h"
+#include "Scene/MainScene.h"
 
 namespace {
     // 计算保持虚拟分辨率比例的归一化视口,多余区域居中留黑边
@@ -58,29 +58,49 @@ Director::Director()
                             {static_cast<float>(WindowConfig::kWindowWidth),
                              static_cast<float>(WindowConfig::kWindowHeight)}))
     , _platformPaths(platform::createPlatformPaths())
+    , _gameFlow(*this)
+    , _pendingQuit(false)
 {
     _applyLetterbox();
 }
 
 Director::~Director() = default;
 
+Director::GameFlow::GameFlow(Director& owner)
+    : _owner(owner)
+{
+}
+
+void Director::GameFlow::onLoginSucceeded()
+{
+    _owner._handleLoginSucceeded();
+}
+
+void Director::GameFlow::onQuitRequested()
+{
+    _owner._handleQuitRequested();
+}
+
 void Director::run()
 {
-    if (!_setupLoginScene())
+    if (!_loadUiFont())
     {
-        std::cerr << "登录场景装配失败,程序退出\n";
+        std::cerr << "资源初始化失败,程序退出\n";
         return;
     }
+
+    _currentScene = _createScene(SceneId::Login);
 
     while (_window.isOpen())
     {
         _processEvents();
         _update();
         _render();
+        _applyPendingSceneChange();
     }
 }
 
-bool Director::_setupLoginScene()
+bool Director::_loadUiFont()
 {
     const std::string fontKey(ResourceConfig::kUiFontKey);
     const std::filesystem::path fontPath =
@@ -90,14 +110,29 @@ bool Director::_setupLoginScene()
         std::cerr << "字体加载失败: " << fontPath << '\n';
         return false;
     }
-
-    _accountModel = std::make_unique<AccountModel>();
-    _loginView = std::make_unique<LoginView>(_resourceManager.font(fontKey));
-    _loginController = std::make_unique<LoginController>(*_loginView, *_accountModel);
-
-    _loginView->setDelegate(&_loginController->viewDelegate());
-    _accountModel->addObserver(&_loginController->accountObserver());
     return true;
+}
+
+std::unique_ptr<IScene> Director::_createScene(SceneId id)
+{
+    switch (id)
+    {
+        case SceneId::Login:
+            return std::make_unique<LoginScene>(_resourceManager, _gameFlow);
+        case SceneId::Main:
+            return std::make_unique<MainScene>(_resourceManager, _gameFlow);
+    }
+    return nullptr;
+}
+
+void Director::_handleLoginSucceeded()
+{
+    _pendingScene = SceneId::Main;
+}
+
+void Director::_handleQuitRequested()
+{
+    _pendingQuit = true;
 }
 
 void Director::_processEvents()
@@ -112,10 +147,44 @@ void Director::_processEvents()
         {
             _applyLetterbox();
         }
-        else if (_loginView)
+        else if (_currentScene)
         {
-            _loginView->handleEvent(*event, _window);
+            _currentScene->handleEvent(*event, _window);
         }
+    }
+}
+
+void Director::_update()
+{
+    const float deltaSeconds = _frameClock.restart().asSeconds();
+    if (_currentScene)
+    {
+        _currentScene->update(deltaSeconds);
+    }
+}
+
+void Director::_render()
+{
+    _window.clear();
+    if (_currentScene)
+    {
+        _currentScene->draw(_window);
+    }
+    _window.display();
+}
+
+void Director::_applyPendingSceneChange()
+{
+    if (_pendingQuit)
+    {
+        _window.close();
+        return;
+    }
+
+    if (_pendingScene.has_value())
+    {
+        _currentScene = _createScene(*_pendingScene);
+        _pendingScene.reset();
     }
 }
 
@@ -125,23 +194,4 @@ void Director::_applyLetterbox()
     const float virtualHeight = static_cast<float>(WindowConfig::kWindowHeight);
     _uiView.setViewport(letterboxViewport(_window.getSize(), virtualWidth, virtualHeight));
     _window.setView(_uiView);
-}
-
-void Director::_update()
-{
-    const float deltaSeconds = _frameClock.restart().asSeconds();
-    if (_loginView)
-    {
-        _loginView->update(deltaSeconds);
-    }
-}
-
-void Director::_render()
-{
-    _window.clear();
-    if (_loginView)
-    {
-        _loginView->draw(_window);
-    }
-    _window.display();
 }

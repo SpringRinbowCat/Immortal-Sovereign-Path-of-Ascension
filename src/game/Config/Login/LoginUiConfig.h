@@ -12,7 +12,6 @@ namespace LoginUiConfig {
     constexpr unsigned int kInputCharSize = 32u;
     constexpr unsigned int kButtonCharSize = 38u;
     constexpr unsigned int kErrorCharSize = 26u;
-    constexpr unsigned int kDialogCharSize = 48u;
 
     // 布局,基于 WindowConfig 的竖屏 720x1280
     constexpr float kFieldX = 80.f;           // 账号框/密码框/按钮共用左边界
@@ -27,10 +26,6 @@ namespace LoginUiConfig {
     constexpr float kLabelGapY = 38.f;        // 标签相对输入框上方的间距
     constexpr float kTextPaddingX = 16.f;     // 文本相对输入框左内边距
     constexpr float kFieldOutlineThickness = 2.f;
-
-    // 弹窗尺寸,居中位置由窗口尺寸推算
-    constexpr float kDialogWidth = 520.f;
-    constexpr float kDialogHeight = 240.f;
 
     // 仅接受的 ASCII 可见字符范围
     constexpr unsigned int kAsciiPrintableMin = 0x20u;
@@ -58,5 +53,4 @@ namespace LoginUiConfig {
     constexpr std::string_view kButtonText = "登录";
     constexpr std::string_view kErrorAccountNotFound = "账号不存在";
     constexpr std::string_view kErrorWrongPassword = "密码错误";
-    constexpr std::string_view kSuccessText = "登录成功";
 }

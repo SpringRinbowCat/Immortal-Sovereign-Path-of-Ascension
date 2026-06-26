@@ -22,8 +22,6 @@ public:
 
     void setErrorMessage(const std::string& message);
 
-    void showSuccessDialog(const std::string& message);
-
     void handleEvent(const sf::Event& event, const sf::RenderWindow& window);
 
     void update(float deltaSeconds);
@@ -55,7 +53,6 @@ private:
 
     ILoginViewDelegate* _delegate;
     InputField _focusedField;
-    bool _dialogVisible;
     bool _caretVisible;
     float _caretBlinkTimer;
     std::string _accountInput;
@@ -66,8 +63,6 @@ private:
     sf::RectangleShape _passwordBox;
     sf::RectangleShape _buttonBox;
     sf::RectangleShape _caret;
-    sf::RectangleShape _dialogOverlay;
-    sf::RectangleShape _dialogBox;
 
     sf::Text _titleText;
     sf::Text _accountLabel;
@@ -76,5 +71,4 @@ private:
     sf::Text _passwordText;
     sf::Text _buttonText;
     sf::Text _errorText;
-    sf::Text _dialogText;
 };
