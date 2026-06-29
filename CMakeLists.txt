@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.22)
 
-project(MaoErLunDao LANGUAGES CXX)
+project(ImmortalSovereign LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -23,7 +23,7 @@ set(GAME_SOURCES
     src/game/Scene/MainScene.cpp
     src/game/Director/Director.cpp)
 
-set(GAME_OUTPUT_NAME "Mystic-Cat-Path-of-Ascension")
+set(GAME_OUTPUT_NAME "Immortal-Sovereign-Path-of-Ascension")
 
 if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
 
@@ -38,8 +38,8 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     set_target_properties(${PROJECT_NAME} PROPERTIES
         OUTPUT_NAME "${GAME_OUTPUT_NAME}"
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ios/Info.plist.in
-        MACOSX_BUNDLE_GUI_IDENTIFIER com.mysticcat.game
-        MACOSX_BUNDLE_BUNDLE_NAME "MysticCat"
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.immortalsovereign.game
+        MACOSX_BUNDLE_BUNDLE_NAME "ImmortalSovereign"
         MACOSX_BUNDLE_EXECUTABLE_NAME "${GAME_OUTPUT_NAME}")
 
     target_link_libraries(${PROJECT_NAME} PRIVATE

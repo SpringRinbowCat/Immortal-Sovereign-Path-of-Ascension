@@ -47,7 +47,7 @@ namespace LoginUiConfig {
     constexpr float kCaretBlinkInterval = 0.5f; // 秒
 
     // 显示文案,UTF-8 编码
-    constexpr std::string_view kTitleText = "太初灵猫录";
+    constexpr std::string_view kTitleText = "太初仙王录";
     constexpr std::string_view kAccountLabelText = "账号";
     constexpr std::string_view kPasswordLabelText = "密码";
     constexpr std::string_view kButtonText = "登录";

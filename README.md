@@ -1,4 +1,4 @@
-# 太初灵猫录 (Mystic Cat: Path of Ascension)
+# 太初仙王录 (Immortal Sovereign: Path of Ascension)
 
 一个基于 SFML 3 的 C++ 游戏项目，采用严格分层的 MVC 架构。
 
@@ -29,7 +29,7 @@ cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 
 # 运行
-./build/Mystic-Cat-Path-of-Ascension
+./build/Immortal-Sovereign-Path-of-Ascension
 ```
 
 > 注意：`build/` 为本地构建产物，已在 `.gitignore` 中忽略，请勿提交。每位协作者在本地各自构建即可。
@@ -199,5 +199,3 @@ Scene/    IScene.h  LoginScene.{h,cpp}
 ## 代码规范
 
 除架构分层外，项目还有一套强制的 C++ 代码实现规范（命名规范、文件注释风格、禁止事项、const 正确性、函数/类规模控制、内存管理、防御性编程等）。提交代码前请确保符合规范，并对照执行改动后的 `git diff` 自检流程。
-
-> 完整的架构与代码规范以项目 steering 文档为准（`.kiro/steering/`，未纳入版本控制）；本 README 为协作者提供的同步副本。

@@ -4,8 +4,8 @@
 # 用法: run_ios_sim.sh ["iPhone 17"]
 set -euo pipefail
 
-APP="build-ios-iphonesimulator/Mystic-Cat-Path-of-Ascension.app"
-BUNDLE_ID="com.mysticcat.game"
+APP="build-ios-iphonesimulator/Immortal-Sovereign-Path-of-Ascension.app"
+BUNDLE_ID="com.immortalsovereign.game"
 DEVICE="${1:-iPhone 17}"
 
 if [ ! -d "$APP" ]; then

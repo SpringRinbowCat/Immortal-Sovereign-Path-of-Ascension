@@ -13,5 +13,5 @@ namespace WindowConfig {
     constexpr unsigned int kWindowHeight = 1280u;
 
     // 窗口标题,UTF-8 编码
-    constexpr std::string_view kWindowTitle = "太初灵猫录";
+    constexpr std::string_view kWindowTitle = "太初仙王录";
 }
