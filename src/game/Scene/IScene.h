@@ -18,4 +18,7 @@ public:
     virtual void update(float deltaSeconds) = 0;
 
     virtual void draw(sf::RenderWindow& window) = 0;
+
+    // 退出前收尾钩子,默认空实现向后兼容;需触发最终保存等收尾的场景可覆写
+    virtual void onExit() {}
 };

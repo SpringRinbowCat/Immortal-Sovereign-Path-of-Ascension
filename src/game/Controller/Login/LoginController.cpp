@@ -72,6 +72,6 @@ void LoginController::_handleAuthStateChanged(AuthState state)
 {
     if (state == AuthState::LoggedIn)
     {
-        _flow.onLoginSucceeded();
+        _flow.onLoginSucceeded(_model.currentAccountId());
     }
 }

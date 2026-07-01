@@ -13,6 +13,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
+#include "Config/AccountConfig.h"
 #include "Config/ResourceConfig.h"
 #include "Config/WindowConfig.h"
 #include "Delegate/IPlatformPaths.h"
@@ -58,7 +59,9 @@ Director::Director()
                             {static_cast<float>(WindowConfig::kWindowWidth),
                              static_cast<float>(WindowConfig::kWindowHeight)}))
     , _platformPaths(platform::createPlatformPaths())
+    , _archiveService(_dispatcher, *_platformPaths)
     , _gameFlow(*this)
+    , _currentAccountId(AccountConfig::kLocalAccountId)
     , _pendingQuit(false)
 {
     _applyLetterbox();
@@ -71,9 +74,14 @@ Director::GameFlow::GameFlow(Director& owner)
 {
 }
 
-void Director::GameFlow::onLoginSucceeded()
+void Director::GameFlow::onLoginSucceeded(const std::string& accountId)
 {
-    _owner._handleLoginSucceeded();
+    _owner._handleLoginSucceeded(accountId);
+}
+
+void Director::GameFlow::onArchiveOwnershipRejected()
+{
+    _owner._handleArchiveOwnershipRejected();
 }
 
 void Director::GameFlow::onQuitRequested()
@@ -94,6 +102,7 @@ void Director::run()
     while (_window.isOpen())
     {
         _processEvents();
+        _dispatcher.drain();  // 排空派发器,在主线程执行异步完成投入的回调
         _update();
         _render();
         _applyPendingSceneChange();
@@ -120,14 +129,20 @@ std::unique_ptr<IScene> Director::_createScene(SceneId id)
         case SceneId::Login:
             return std::make_unique<LoginScene>(_resourceManager, _gameFlow);
         case SceneId::Main:
-            return std::make_unique<MainScene>(_resourceManager, _gameFlow);
+            return std::make_unique<MainScene>(_resourceManager, _gameFlow, _archiveService, _currentAccountId);
     }
     return nullptr;
 }
 
-void Director::_handleLoginSucceeded()
+void Director::_handleLoginSucceeded(const std::string& accountId)
 {
+    _currentAccountId = accountId;  // 用真实登录账号替换构造时的占位
     _pendingScene = SceneId::Main;
+}
+
+void Director::_handleArchiveOwnershipRejected()
+{
+    _pendingScene = SceneId::Login;  // 归属不符,帧末切回登录
 }
 
 void Director::_handleQuitRequested()
@@ -177,6 +192,12 @@ void Director::_applyPendingSceneChange()
 {
     if (_pendingQuit)
     {
+        // 退出前:先让场景收尾触发最终保存(MainScene 任务 10 覆写 onExit),再冲刷写盘,最后关窗
+        if (_currentScene)
+        {
+            _currentScene->onExit();
+        }
+        _archiveService.shutdownFlush();
         _window.close();
         return;
     }

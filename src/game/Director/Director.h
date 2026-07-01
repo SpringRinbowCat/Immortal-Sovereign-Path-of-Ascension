@@ -5,13 +5,16 @@
 
 #include <memory>
 #include <optional>
+#include <string>
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Clock.hpp>
 
 #include "Delegate/IGameFlow.h"
+#include "Infra/Dispatcher.h"
 #include "Infra/ResourceManager.h"
+#include "Service/Archive/ArchiveService.h"
 
 class IScene;
 class IPlatformPaths;
@@ -35,7 +38,8 @@ private:
     class GameFlow : public IGameFlow {
     public:
         explicit GameFlow(Director& owner);
-        void onLoginSucceeded() override;
+        void onLoginSucceeded(const std::string& accountId) override;
+        void onArchiveOwnershipRejected() override;
         void onQuitRequested() override;
 
     private:
@@ -57,7 +61,8 @@ private:
     void _applyLetterbox();
 
     // 流程语义事件处理,只记录待处理请求,帧末统一执行
-    void _handleLoginSucceeded();
+    void _handleLoginSucceeded(const std::string& accountId);
+    void _handleArchiveOwnershipRejected();
     void _handleQuitRequested();
 
     sf::RenderWindow _window;
@@ -65,8 +70,11 @@ private:
     sf::Clock _frameClock;
     sf::View _uiView;
     std::unique_ptr<IPlatformPaths> _platformPaths;
+    Dispatcher _dispatcher;              // 主线程派发器,须先于 _archiveService 声明与构造
+    ArchiveService _archiveService;      // 存档服务,依赖 _dispatcher 与 *_platformPaths,作 IArchiveStore
     GameFlow _gameFlow;
 
+    std::string _currentAccountId;       // 当前登录账号 ID,注入主场景作读档账号
     std::unique_ptr<IScene> _currentScene;
     std::optional<SceneId> _pendingScene;
     bool _pendingQuit;
